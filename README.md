@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/shibori-engine-icon.svg" alt="Shibori Engine icon" width="180">
+</p>
+
 # Shibori Engine
 
 Adaptive, type-aware compression for database data.

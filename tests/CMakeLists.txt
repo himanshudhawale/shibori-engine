@@ -28,6 +28,9 @@ target_link_libraries(shibori_engine_io_file_test PRIVATE Shibori::engine)
 add_executable(shibori_engine_integrity_value_test integrity_value_test.cpp)
 target_link_libraries(shibori_engine_integrity_value_test PRIVATE Shibori::engine)
 
+add_executable(shibori_engine_crc32c_test crc32c_test.cpp)
+target_link_libraries(shibori_engine_crc32c_test PRIVATE Shibori::engine)
+
 if(MSVC)
   target_compile_options(
     shibori_engine_smoke_test
@@ -67,6 +70,10 @@ if(MSVC)
   )
   target_compile_options(
     shibori_engine_integrity_value_test
+    PRIVATE /W4 /permissive-
+  )
+  target_compile_options(
+    shibori_engine_crc32c_test
     PRIVATE /W4 /permissive-
   )
 else()
@@ -140,6 +147,13 @@ else()
       -Wextra
       -Wpedantic
   )
+  target_compile_options(
+    shibori_engine_crc32c_test
+    PRIVATE
+      -Wall
+      -Wextra
+      -Wpedantic
+  )
 endif()
 
 add_test(NAME shibori_engine.smoke COMMAND shibori_engine_smoke_test)
@@ -158,6 +172,7 @@ add_test(
   NAME shibori_engine.integrity_value
   COMMAND shibori_engine_integrity_value_test
 )
+add_test(NAME shibori_engine.crc32c COMMAND shibori_engine_crc32c_test)
 
 if(WIN32)
   set_tests_properties(
@@ -171,6 +186,7 @@ if(WIN32)
     shibori_engine.io_memory
     shibori_engine.io_file
     shibori_engine.integrity_value
+    shibori_engine.crc32c
     PROPERTIES
       ENVIRONMENT_MODIFICATION
         "PATH=path_list_prepend:$<TARGET_FILE_DIR:shibori_engine>"

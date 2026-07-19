@@ -1,10 +1,15 @@
 #include <shibori/engine/checked_arithmetic.hpp>
+#include <shibori/engine/column.hpp>
 #include <shibori/engine/error.hpp>
 #include <shibori/engine/logical_type.hpp>
 #include <shibori/engine/resource.hpp>
 #include <shibori/engine/result.hpp>
 #include <shibori/engine/schema.hpp>
 #include <shibori/engine/version.hpp>
+
+#include <array>
+#include <cstddef>
+#include <utility>
 
 int main() {
   if (shibori::engine::version_string() != "0.1.0") {
@@ -54,8 +59,17 @@ int main() {
   shibori::engine::SchemaBuilder schema_builder;
   const auto added = schema_builder.add_field(std::move(*field));
   const auto schema = std::move(schema_builder).finish();
+  const std::array column_bytes{std::byte{42}};
+  auto column_buffer = shibori::engine::ByteBuffer::copy(column_bytes);
+  auto column_type = shibori::engine::LogicalType::create(
+      shibori::engine::LogicalTypeKind::int8);
+  shibori::engine::FixedWidthColumnBuilder column_builder(
+      std::move(*column_type), 1);
+  const auto values_set = column_builder.set_values(std::move(*column_buffer));
+  const auto column = std::move(column_builder).finish();
   return reservation && budget->used() == 64 && decimal && added && schema &&
-             schema->field_count() == 1 && decimal->fixed_width_bytes() == 16
+             schema->field_count() == 1 && decimal->fixed_width_bytes() == 16 &&
+             values_set && column && column->values()->size() == 1
          ? 0
          : 1;
 }

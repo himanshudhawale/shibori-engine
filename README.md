@@ -19,6 +19,7 @@ before the container and API are stabilized.
 - [Data model](docs/data-model.md)
 - [Logical types](docs/logical-types.md)
 - [Immutable schemas](docs/schemas.md)
+- [Typed column storage](docs/columns.md)
 - [Container format](docs/container-format.md)
 - [Compression pipeline](docs/compression-pipeline.md)
 - [Adaptive policy](docs/adaptive-policy.md)

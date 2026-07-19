@@ -22,6 +22,7 @@ target_sources(
   shibori_engine
   PRIVATE
     src/checked_arithmetic.cpp
+    src/column.cpp
     src/error.cpp
     src/logical_type.cpp
     src/resource.cpp

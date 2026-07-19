@@ -21,6 +21,7 @@ before the container and API are stabilized.
 - [Compression pipeline](docs/compression-pipeline.md)
 - [Adaptive policy](docs/adaptive-policy.md)
 - [Public API](docs/api.md)
+- [Error handling](docs/error-handling.md)
 - [Reliability and security](docs/reliability-security.md)
 - [Testing strategy](docs/testing.md)
 - [Compatibility policy](docs/compatibility.md)

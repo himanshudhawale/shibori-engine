@@ -11,6 +11,7 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdio>
 #include <utility>
 
 int main() {
@@ -76,10 +77,24 @@ int main() {
   auto sink = shibori::engine::MemoryByteSink::create(8, 1);
   const auto io_written =
       shibori::engine::write_all(**sink, column_bytes);
+  const char* file_path = "shibori-engine-package-consumer.bin";
+  auto file_sink =
+      shibori::engine::FileByteSink::open(file_path, column_bytes.size());
+  const auto file_written =
+      shibori::engine::write_all(**file_sink, column_bytes);
+  const auto file_flushed = (*file_sink)->flush({});
+  file_sink->reset();
+  auto file_source = shibori::engine::FileByteSource::open(file_path, 2);
+  std::array<std::byte, 8> file_bytes{};
+  const auto file_read =
+      shibori::engine::read_exact(**file_source, file_bytes);
+  file_source->reset();
+  std::remove(file_path);
   return reservation && budget->used() == 64 && decimal && added && schema &&
              schema->field_count() == 1 && decimal->fixed_width_bytes() == 16 &&
              values_set && column_set && block && block->row_count() == 1 &&
-             io_written && (*sink)->bytes().size() == 8
+             io_written && (*sink)->bytes().size() == 8 && file_written &&
+             file_flushed && file_read && file_bytes == column_bytes
          ? 0
          : 1;
 }

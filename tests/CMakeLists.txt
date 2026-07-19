@@ -22,6 +22,9 @@ target_link_libraries(shibori_engine_block_test PRIVATE Shibori::engine)
 add_executable(shibori_engine_io_memory_test io_memory_test.cpp)
 target_link_libraries(shibori_engine_io_memory_test PRIVATE Shibori::engine)
 
+add_executable(shibori_engine_io_file_test io_file_test.cpp)
+target_link_libraries(shibori_engine_io_file_test PRIVATE Shibori::engine)
+
 if(MSVC)
   target_compile_options(
     shibori_engine_smoke_test
@@ -53,6 +56,10 @@ if(MSVC)
   )
   target_compile_options(
     shibori_engine_io_memory_test
+    PRIVATE /W4 /permissive-
+  )
+  target_compile_options(
+    shibori_engine_io_file_test
     PRIVATE /W4 /permissive-
   )
 else()
@@ -112,6 +119,13 @@ else()
       -Wextra
       -Wpedantic
   )
+  target_compile_options(
+    shibori_engine_io_file_test
+    PRIVATE
+      -Wall
+      -Wextra
+      -Wpedantic
+  )
 endif()
 
 add_test(NAME shibori_engine.smoke COMMAND shibori_engine_smoke_test)
@@ -125,6 +139,7 @@ add_test(NAME shibori_engine.schema COMMAND shibori_engine_schema_test)
 add_test(NAME shibori_engine.column COMMAND shibori_engine_column_test)
 add_test(NAME shibori_engine.block COMMAND shibori_engine_block_test)
 add_test(NAME shibori_engine.io_memory COMMAND shibori_engine_io_memory_test)
+add_test(NAME shibori_engine.io_file COMMAND shibori_engine_io_file_test)
 
 if(WIN32)
   set_tests_properties(
@@ -136,6 +151,7 @@ if(WIN32)
     shibori_engine.column
     shibori_engine.block
     shibori_engine.io_memory
+    shibori_engine.io_file
     PROPERTIES
       ENVIRONMENT_MODIFICATION
         "PATH=path_list_prepend:$<TARGET_FILE_DIR:shibori_engine>"

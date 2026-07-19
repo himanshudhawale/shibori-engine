@@ -5,7 +5,24 @@ Adaptive, type-aware compression for database data.
 Shibori Engine analyzes typed blocks and selects an encoding and compression
 codec based on data characteristics, compression ratio, and decode cost.
 
-The project is in its design phase. See [the initial design](docs/design.md).
+The project is in its design phase. Implementation contracts are documented
+before the container and API are stabilized.
+
+## Documentation
+
+- [Product requirements](docs/product-requirements.md)
+- [Architecture](docs/architecture.md)
+- [Data model](docs/data-model.md)
+- [Container format](docs/container-format.md)
+- [Compression pipeline](docs/compression-pipeline.md)
+- [Adaptive policy](docs/adaptive-policy.md)
+- [Public API](docs/api.md)
+- [Reliability and security](docs/reliability-security.md)
+- [Testing strategy](docs/testing.md)
+- [Compatibility policy](docs/compatibility.md)
+- [Roadmap](docs/roadmap.md)
+- [Support plan](docs/support.md)
+- [Glossary](docs/glossary.md)
 
 ## License
 

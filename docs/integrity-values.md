@@ -40,3 +40,14 @@ The dependency is dual-licensed under Apache-2.0 or CC0-1.0. License texts are
 installed with Shibori, and the exact source and checksum are recorded in
 `THIRD_PARTY_NOTICES.md`. No BLAKE3 header or native target type appears in the
 installed Shibori API.
+
+## Incremental BLAKE3-256
+
+`Blake3Hasher` owns the native state behind the Shibori API. Creation reports
+allocation failure through `Result`; updates accept bounded byte spans;
+`finalize` returns exactly 32 bytes without consuming the state; and `reset`
+returns the object to the empty-input state.
+
+Repeated finalization is stable, and fragmented input produces the same digest
+as one contiguous update. `blake3_version()` exposes the linked implementation
+version without exposing its header or native types.

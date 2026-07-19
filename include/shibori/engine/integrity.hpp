@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <span>
 #include <string>
 #include <string_view>
@@ -105,6 +106,29 @@ class Blake3Digest {
 
  private:
   std::array<std::byte, byte_size> bytes_{};
+};
+
+[[nodiscard]] SHIBORI_ENGINE_API std::string_view blake3_version() noexcept;
+
+class Blake3Hasher {
+ public:
+  SHIBORI_ENGINE_API ~Blake3Hasher();
+
+  Blake3Hasher(const Blake3Hasher&) = delete;
+  Blake3Hasher& operator=(const Blake3Hasher&) = delete;
+  SHIBORI_ENGINE_API Blake3Hasher(Blake3Hasher&& other) noexcept;
+  SHIBORI_ENGINE_API Blake3Hasher& operator=(Blake3Hasher&& other) noexcept;
+
+  [[nodiscard]] SHIBORI_ENGINE_API static Result<Blake3Hasher> create();
+  SHIBORI_ENGINE_API void update(std::span<const std::byte> bytes) noexcept;
+  [[nodiscard]] SHIBORI_ENGINE_API Blake3Digest finalize() const noexcept;
+  SHIBORI_ENGINE_API void reset() noexcept;
+
+ private:
+  class Impl;
+  explicit Blake3Hasher(std::unique_ptr<Impl> impl) noexcept;
+
+  std::unique_ptr<Impl> impl_;
 };
 
 }  // namespace shibori::engine

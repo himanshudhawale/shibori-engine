@@ -32,6 +32,7 @@ target_sources(
     src/column.cpp
     src/error.cpp
     src/file_io.cpp
+    src/format/endian.cpp
     src/io.cpp
     src/integrity.cpp
     src/logical_type.cpp

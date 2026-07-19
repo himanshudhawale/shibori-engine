@@ -27,6 +27,7 @@ target_sources(
     src/error.cpp
     src/file_io.cpp
     src/io.cpp
+    src/integrity.cpp
     src/logical_type.cpp
     src/resource.cpp
     src/schema.cpp

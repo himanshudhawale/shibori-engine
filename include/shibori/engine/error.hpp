@@ -29,6 +29,7 @@ enum class ErrorCode : std::uint16_t {
   invalid_resource_limit = 1002,
   invalid_schema = 2000,
   invalid_block = 2001,
+  invalid_digest_text = 2002,
   io_read_failed = 3000,
   io_write_failed = 3001,
   io_no_progress = 3002,

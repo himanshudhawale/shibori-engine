@@ -23,6 +23,7 @@ target_sources(
   PRIVATE
     src/checked_arithmetic.cpp
     src/error.cpp
+    src/logical_type.cpp
     src/resource.cpp
     src/version.cpp
 )

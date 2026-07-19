@@ -1,5 +1,6 @@
 #include <shibori/engine/checked_arithmetic.hpp>
 #include <shibori/engine/error.hpp>
+#include <shibori/engine/logical_type.hpp>
 #include <shibori/engine/resource.hpp>
 #include <shibori/engine/result.hpp>
 #include <shibori/engine/version.hpp>
@@ -42,5 +43,11 @@ int main() {
   auto reservation = budget->reserve(
       64,
       shibori::engine::Operation::configure);
-  return reservation && budget->used() == 64 ? 0 : 1;
+  const auto decimal = shibori::engine::LogicalType::create(
+      shibori::engine::LogicalTypeKind::decimal,
+      shibori::engine::DecimalParameters{18, 4});
+  return reservation && budget->used() == 64 && decimal &&
+             decimal->fixed_width_bytes() == 16
+         ? 0
+         : 1;
 }

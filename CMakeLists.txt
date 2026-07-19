@@ -25,6 +25,7 @@ target_sources(
     src/error.cpp
     src/logical_type.cpp
     src/resource.cpp
+    src/schema.cpp
     src/version.cpp
 )
 

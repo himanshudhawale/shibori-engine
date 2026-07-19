@@ -28,6 +28,7 @@ before the container and API are stabilized.
 - [Public API](docs/api.md)
 - [Error handling](docs/error-handling.md)
 - [Resource governance](docs/resource-governance.md)
+- [Integrity value types](docs/integrity-values.md)
 - [Reliability and security](docs/reliability-security.md)
 - [Testing strategy](docs/testing.md)
 - [Compatibility policy](docs/compatibility.md)

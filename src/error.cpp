@@ -86,6 +86,8 @@ std::string_view to_string(ErrorCode code) noexcept {
       return "invalid_schema";
     case ErrorCode::invalid_block:
       return "invalid_block";
+    case ErrorCode::invalid_digest_text:
+      return "invalid_digest_text";
     case ErrorCode::io_read_failed:
       return "io_read_failed";
     case ErrorCode::io_write_failed:

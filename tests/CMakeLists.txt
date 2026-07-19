@@ -10,6 +10,9 @@ target_link_libraries(shibori_engine_resource_test PRIVATE Shibori::engine)
 add_executable(shibori_engine_logical_type_test logical_type_test.cpp)
 target_link_libraries(shibori_engine_logical_type_test PRIVATE Shibori::engine)
 
+add_executable(shibori_engine_schema_test schema_test.cpp)
+target_link_libraries(shibori_engine_schema_test PRIVATE Shibori::engine)
+
 if(MSVC)
   target_compile_options(
     shibori_engine_smoke_test
@@ -25,6 +28,10 @@ if(MSVC)
   )
   target_compile_options(
     shibori_engine_logical_type_test
+    PRIVATE /W4 /permissive-
+  )
+  target_compile_options(
+    shibori_engine_schema_test
     PRIVATE /W4 /permissive-
   )
 else()
@@ -56,6 +63,13 @@ else()
       -Wextra
       -Wpedantic
   )
+  target_compile_options(
+    shibori_engine_schema_test
+    PRIVATE
+      -Wall
+      -Wextra
+      -Wpedantic
+  )
 endif()
 
 add_test(NAME shibori_engine.smoke COMMAND shibori_engine_smoke_test)
@@ -65,6 +79,7 @@ add_test(
   NAME shibori_engine.logical_type
   COMMAND shibori_engine_logical_type_test
 )
+add_test(NAME shibori_engine.schema COMMAND shibori_engine_schema_test)
 
 if(WIN32)
   set_tests_properties(
@@ -72,6 +87,7 @@ if(WIN32)
     shibori_engine.error
     shibori_engine.resource
     shibori_engine.logical_type
+    shibori_engine.schema
     PROPERTIES
       ENVIRONMENT_MODIFICATION
         "PATH=path_list_prepend:$<TARGET_FILE_DIR:shibori_engine>"

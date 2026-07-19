@@ -3,6 +3,7 @@
 #include <shibori/engine/logical_type.hpp>
 #include <shibori/engine/resource.hpp>
 #include <shibori/engine/result.hpp>
+#include <shibori/engine/schema.hpp>
 #include <shibori/engine/version.hpp>
 
 int main() {
@@ -46,8 +47,15 @@ int main() {
   const auto decimal = shibori::engine::LogicalType::create(
       shibori::engine::LogicalTypeKind::decimal,
       shibori::engine::DecimalParameters{18, 4});
-  return reservation && budget->used() == 64 && decimal &&
-             decimal->fixed_width_bytes() == 16
+  auto field_type = shibori::engine::LogicalType::create(
+      shibori::engine::LogicalTypeKind::int64);
+  auto field = shibori::engine::FieldBuilder(
+      1, "value", std::move(*field_type), false).finish();
+  shibori::engine::SchemaBuilder schema_builder;
+  const auto added = schema_builder.add_field(std::move(*field));
+  const auto schema = std::move(schema_builder).finish();
+  return reservation && budget->used() == 64 && decimal && added && schema &&
+             schema->field_count() == 1 && decimal->fixed_width_bytes() == 16
          ? 0
          : 1;
 }

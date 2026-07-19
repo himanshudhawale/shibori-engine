@@ -1,0 +1,19 @@
+# Build output
+build/
+dist/
+out/
+target/
+
+# Tooling
+.cache/
+.idea/
+.vscode/
+compile_commands.json
+
+# Local files
+.env
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db

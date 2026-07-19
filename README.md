@@ -41,6 +41,9 @@ before the container and API are stabilized.
 
 Apache License 2.0.
 
+Third-party dependency licenses are listed in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## Build
 
 Shibori Engine requires CMake 3.25 and a C++23 compiler.

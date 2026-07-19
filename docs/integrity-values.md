@@ -29,3 +29,14 @@ runtime and uses them without changing the checksum. Callers can select portable
 mode explicitly for reproducibility checks. Unsupported CPUs and architectures
 always use the scalar implementation; executing an unsupported instruction is
 never part of feature detection.
+
+## BLAKE3 implementation dependency
+
+The engine pins the official BLAKE3 C implementation at version 1.8.5 and
+commit `93a431c78a52d7ccf0f366f106467f5070e6075e`. CMake verifies the source
+archive SHA-256 before building its portable C files as a private object target.
+
+The dependency is dual-licensed under Apache-2.0 or CC0-1.0. License texts are
+installed with Shibori, and the exact source and checksum are recorded in
+`THIRD_PARTY_NOTICES.md`. No BLAKE3 header or native target type appears in the
+installed Shibori API.

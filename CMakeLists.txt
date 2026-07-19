@@ -25,6 +25,7 @@ target_sources(
     src/checked_arithmetic.cpp
     src/column.cpp
     src/error.cpp
+    src/file_io.cpp
     src/io.cpp
     src/logical_type.cpp
     src/resource.cpp

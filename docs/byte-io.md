@@ -14,3 +14,13 @@ Every operation accepts a shareable cancellation token and checks it before
 mutation. Memory adapters own a copy or retain explicitly immutable shared
 input, expose deterministic position and size, and enforce configured output
 bounds. Flush means adapter completion only and never claims durable storage.
+
+File adapters use the same contracts, report position/size/seek capabilities,
+enforce per-operation and total-size bounds, and map open, read, write, seek,
+and flush failures to typed I/O errors. Positioned helpers check seek support
+before changing adapter position or destination bytes.
+
+Tests use deterministic scripted adapters for exact short-operation schedules,
+zero-progress responses, unsupported seek behavior, and injected read/write
+failures. This makes retry and failure semantics reproducible without depending
+on operating-system buffering.

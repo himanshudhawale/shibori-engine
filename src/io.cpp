@@ -198,6 +198,44 @@ Status write_all(
   return {};
 }
 
+Status read_exact_at(
+    ByteSource& source,
+    std::uint64_t position,
+    std::span<std::byte> destination,
+    const CancellationToken& cancellation) {
+  if (auto status = require_capabilities(
+          source, ByteSourceCapabilities{false, false, true});
+      !status) {
+    return status;
+  }
+  if (cancellation.is_cancelled()) {
+    return cancelled(Operation::read);
+  }
+  if (auto status = source.seek(position, cancellation); !status) {
+    return status;
+  }
+  return read_exact(source, destination, cancellation);
+}
+
+Status write_all_at(
+    ByteSink& sink,
+    std::uint64_t position,
+    std::span<const std::byte> source,
+    const CancellationToken& cancellation) {
+  if (auto status = require_capabilities(
+          sink, ByteSinkCapabilities{false, true, false});
+      !status) {
+    return status;
+  }
+  if (cancellation.is_cancelled()) {
+    return cancelled(Operation::write);
+  }
+  if (auto status = sink.seek(position, cancellation); !status) {
+    return status;
+  }
+  return write_all(sink, source, cancellation);
+}
+
 class MemoryByteSource::Impl {
  public:
   Impl(

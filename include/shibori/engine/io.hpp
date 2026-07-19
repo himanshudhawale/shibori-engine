@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <string>
 #include <vector>
 
 #include <shibori/engine/export.hpp>
@@ -114,6 +115,16 @@ class ByteSink {
     ByteSink& sink,
     std::span<const std::byte> source,
     const CancellationToken& cancellation = {});
+[[nodiscard]] SHIBORI_ENGINE_API Status read_exact_at(
+    ByteSource& source,
+    std::uint64_t position,
+    std::span<std::byte> destination,
+    const CancellationToken& cancellation = {});
+[[nodiscard]] SHIBORI_ENGINE_API Status write_all_at(
+    ByteSink& sink,
+    std::uint64_t position,
+    std::span<const std::byte> source,
+    const CancellationToken& cancellation = {});
 
 class MemoryByteSource final : public ByteSource {
  public:
@@ -174,6 +185,62 @@ class MemoryByteSink final : public ByteSink {
  private:
   class Impl;
   explicit MemoryByteSink(std::unique_ptr<Impl> impl) noexcept;
+  std::unique_ptr<Impl> impl_;
+};
+
+class FileByteSource final : public ByteSource {
+ public:
+  [[nodiscard]] SHIBORI_ENGINE_API static Result<std::unique_ptr<FileByteSource>>
+  open(
+      std::string path,
+      std::size_t maximum_read_size = static_cast<std::size_t>(-1));
+
+  SHIBORI_ENGINE_API ~FileByteSource() override;
+  [[nodiscard]] SHIBORI_ENGINE_API Result<ReadOutcome> read(
+      std::span<std::byte> destination,
+      const CancellationToken& cancellation) override;
+  [[nodiscard]] SHIBORI_ENGINE_API ByteSourceCapabilities capabilities()
+      const noexcept override;
+  [[nodiscard]] SHIBORI_ENGINE_API std::optional<std::uint64_t> position()
+      const noexcept override;
+  [[nodiscard]] SHIBORI_ENGINE_API std::optional<std::uint64_t> size()
+      const noexcept override;
+  [[nodiscard]] SHIBORI_ENGINE_API Status seek(
+      std::uint64_t position,
+      const CancellationToken& cancellation) override;
+
+ private:
+  class Impl;
+  explicit FileByteSource(std::unique_ptr<Impl> impl) noexcept;
+  std::unique_ptr<Impl> impl_;
+};
+
+class FileByteSink final : public ByteSink {
+ public:
+  [[nodiscard]] SHIBORI_ENGINE_API static Result<std::unique_ptr<FileByteSink>>
+  open(
+      std::string path,
+      std::uint64_t maximum_size,
+      bool truncate = true,
+      std::size_t maximum_write_size = static_cast<std::size_t>(-1));
+
+  SHIBORI_ENGINE_API ~FileByteSink() override;
+  [[nodiscard]] SHIBORI_ENGINE_API Result<std::size_t> write(
+      std::span<const std::byte> source,
+      const CancellationToken& cancellation) override;
+  [[nodiscard]] SHIBORI_ENGINE_API ByteSinkCapabilities capabilities()
+      const noexcept override;
+  [[nodiscard]] SHIBORI_ENGINE_API std::optional<std::uint64_t> position()
+      const noexcept override;
+  [[nodiscard]] SHIBORI_ENGINE_API Status seek(
+      std::uint64_t position,
+      const CancellationToken& cancellation) override;
+  [[nodiscard]] SHIBORI_ENGINE_API Status flush(
+      const CancellationToken& cancellation) override;
+
+ private:
+  class Impl;
+  explicit FileByteSink(std::unique_ptr<Impl> impl) noexcept;
   std::unique_ptr<Impl> impl_;
 };
 

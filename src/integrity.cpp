@@ -1,5 +1,7 @@
 #include <shibori/engine/integrity.hpp>
 
+#include "crc32c_backend.hpp"
+
 #include <array>
 #include <string>
 
@@ -39,12 +41,47 @@ int decode_hex(char value) noexcept {
 
 }  // namespace
 
-void Crc32cHasher::update(std::span<const std::byte> bytes) noexcept {
+namespace detail {
+
+std::uint32_t portable_crc32c_update(
+    std::uint32_t state,
+    std::span<const std::byte> bytes) noexcept {
   for (const auto byte : bytes) {
     const auto index =
-        (state_ ^ static_cast<std::uint32_t>(byte)) & 0xffU;
-    state_ = crc32c_table[index] ^ (state_ >> 8U);
+        (state ^ static_cast<std::uint32_t>(byte)) & 0xffU;
+    state = crc32c_table[index] ^ (state >> 8U);
   }
+  return state;
+}
+
+}  // namespace detail
+
+Crc32cHasher::Crc32cHasher(Crc32cMode mode) noexcept {
+#if defined(SHIBORI_HAS_X86_CRC32C)
+  if (mode == Crc32cMode::automatic && detail::x86_crc32c_available()) {
+    implementation_ = Crc32cImplementation::hardware;
+  }
+#else
+  static_cast<void>(mode);
+#endif
+}
+
+bool Crc32cHasher::hardware_available() noexcept {
+#if defined(SHIBORI_HAS_X86_CRC32C)
+  return detail::x86_crc32c_available();
+#else
+  return false;
+#endif
+}
+
+void Crc32cHasher::update(std::span<const std::byte> bytes) noexcept {
+#if defined(SHIBORI_HAS_X86_CRC32C)
+  if (implementation_ == Crc32cImplementation::hardware) {
+    state_ = detail::x86_crc32c_update(state_, bytes);
+    return;
+  }
+#endif
+  state_ = detail::portable_crc32c_update(state_, bytes);
 }
 
 std::string Blake3Digest::to_hex() const {

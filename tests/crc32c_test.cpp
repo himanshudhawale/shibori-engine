@@ -25,6 +25,8 @@ bool expect(bool condition, const char* message) {
 
 int main() {
   using shibori::engine::Crc32cHasher;
+  using shibori::engine::Crc32cImplementation;
+  using shibori::engine::Crc32cMode;
 
   Crc32cHasher empty;
   if (!expect(empty.finalize().value() == 0U, "Empty CRC32C vector failed")) {
@@ -71,9 +73,38 @@ int main() {
         std::span<const std::byte>(large).subspan(offset, length));
   }
 
+  if (!expect(
+          large_fragmented.finalize() == large_contiguous.finalize(),
+          "Large fragmented CRC32C differs from contiguous CRC32C")) {
+    return 1;
+  }
+
+  Crc32cHasher portable(Crc32cMode::portable);
+  portable.update(large);
+  if (!expect(
+          portable.implementation() == Crc32cImplementation::portable,
+          "Portable mode selected another implementation")) {
+    return 1;
+  }
+  if (!expect(
+          portable.finalize() == large_contiguous.finalize(),
+          "Runtime and portable CRC32C implementations differ")) {
+    return 1;
+  }
+
+  if (Crc32cHasher::hardware_available()) {
+    return expect(
+               large_contiguous.implementation() ==
+                   Crc32cImplementation::hardware,
+               "Automatic mode did not select available hardware CRC32C")
+               ? 0
+               : 1;
+  }
+
   return expect(
-             large_fragmented.finalize() == large_contiguous.finalize(),
-             "Large fragmented CRC32C differs from contiguous CRC32C")
+             large_contiguous.implementation() ==
+                 Crc32cImplementation::portable,
+             "Automatic mode selected unavailable hardware CRC32C")
              ? 0
              : 1;
 }

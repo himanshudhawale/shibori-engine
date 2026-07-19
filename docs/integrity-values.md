@@ -23,3 +23,9 @@ reuse. The implementation is portable and independent of host byte order.
 
 Runtime hardware acceleration remains a separate child issue so the portable
 implementation stays available as the reference and unconditional fallback.
+
+On supported x86 hosts, automatic mode detects SSE4.2 CRC32C instructions at
+runtime and uses them without changing the checksum. Callers can select portable
+mode explicitly for reproducibility checks. Unsupported CPUs and architectures
+always use the scalar implementation; executing an unsupported instruction is
+never part of feature detection.

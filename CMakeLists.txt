@@ -21,6 +21,7 @@ add_library(Shibori::engine ALIAS shibori_engine)
 target_sources(
   shibori_engine
   PRIVATE
+    src/error.cpp
     src/version.cpp
 )
 

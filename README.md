@@ -24,6 +24,7 @@ before the container and API are stabilized.
 - [Reliability and security](docs/reliability-security.md)
 - [Testing strategy](docs/testing.md)
 - [Compatibility policy](docs/compatibility.md)
+- [Build and packaging](docs/build-and-packaging.md)
 - [Roadmap](docs/roadmap.md)
 - [Support plan](docs/support.md)
 - [Glossary](docs/glossary.md)
@@ -31,3 +32,15 @@ before the container and API are stabilized.
 ## License
 
 Apache License 2.0.
+
+## Build
+
+Shibori Engine requires CMake 3.25 and a C++23 compiler.
+
+```powershell
+cmake --preset dev-static
+cmake --build --preset dev-static
+ctest --preset dev-static
+```
+
+Use `dev-shared` instead to build and test the shared library.

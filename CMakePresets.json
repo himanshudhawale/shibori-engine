@@ -1,0 +1,58 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "dev-static",
+      "displayName": "Development static build",
+      "binaryDir": "${sourceDir}/build/dev-static",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "OFF",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "SHIBORI_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "dev-shared",
+      "displayName": "Development shared build",
+      "binaryDir": "${sourceDir}/build/dev-shared",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "SHIBORI_BUILD_TESTS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev-static",
+      "configurePreset": "dev-static"
+    },
+    {
+      "name": "dev-shared",
+      "configurePreset": "dev-shared"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "dev-static",
+      "configurePreset": "dev-static",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "dev-shared",
+      "configurePreset": "dev-shared",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

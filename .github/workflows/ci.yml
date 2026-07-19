@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        shared: [OFF, ON]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >-
+          cmake -S . -B build
+          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+          -DSHIBORI_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Install
+        run: cmake --install build --config Release --prefix "${{ github.workspace }}/install"
+
+      - name: Configure package consumer
+        run: >-
+          cmake -S tests/package-consumer -B consumer-build
+          -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install"
+
+      - name: Build package consumer
+        run: cmake --build consumer-build --config Release

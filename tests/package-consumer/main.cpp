@@ -3,6 +3,7 @@
 #include <shibori/engine/column.hpp>
 #include <shibori/engine/error.hpp>
 #include <shibori/engine/logical_type.hpp>
+#include <shibori/engine/io.hpp>
 #include <shibori/engine/resource.hpp>
 #include <shibori/engine/result.hpp>
 #include <shibori/engine/schema.hpp>
@@ -72,9 +73,13 @@ int main() {
   const auto column_set =
       block_builder.set_column(1, std::move(*column));
   const auto block = std::move(block_builder).finish();
+  auto sink = shibori::engine::MemoryByteSink::create(8, 1);
+  const auto io_written =
+      shibori::engine::write_all(**sink, column_bytes);
   return reservation && budget->used() == 64 && decimal && added && schema &&
              schema->field_count() == 1 && decimal->fixed_width_bytes() == 16 &&
-             values_set && column_set && block && block->row_count() == 1
+             values_set && column_set && block && block->row_count() == 1 &&
+             io_written && (*sink)->bytes().size() == 8
          ? 0
          : 1;
 }

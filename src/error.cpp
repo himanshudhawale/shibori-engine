@@ -80,6 +80,8 @@ std::string_view to_string(ErrorCode code) noexcept {
       return "invalid_configuration";
     case ErrorCode::invalid_state:
       return "invalid_state";
+    case ErrorCode::invalid_resource_limit:
+      return "invalid_resource_limit";
     case ErrorCode::invalid_schema:
       return "invalid_schema";
     case ErrorCode::invalid_block:
@@ -108,6 +110,10 @@ std::string_view to_string(ErrorCode code) noexcept {
       return "limit_exceeded";
     case ErrorCode::allocation_failed:
       return "allocation_failed";
+    case ErrorCode::arithmetic_overflow:
+      return "arithmetic_overflow";
+    case ErrorCode::range_exceeded:
+      return "range_exceeded";
     case ErrorCode::operation_cancelled:
       return "operation_cancelled";
     case ErrorCode::plugin_contract_violation:

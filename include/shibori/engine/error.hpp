@@ -26,6 +26,7 @@ enum class ErrorCategory : std::uint8_t {
 enum class ErrorCode : std::uint16_t {
   invalid_configuration = 1000,
   invalid_state = 1001,
+  invalid_resource_limit = 1002,
   invalid_schema = 2000,
   invalid_block = 2001,
   io_read_failed = 3000,
@@ -40,6 +41,8 @@ enum class ErrorCode : std::uint16_t {
   missing_component = 6002,
   limit_exceeded = 7000,
   allocation_failed = 7001,
+  arithmetic_overflow = 7002,
+  range_exceeded = 7003,
   operation_cancelled = 8000,
   plugin_contract_violation = 9000,
   plugin_failure = 9001,

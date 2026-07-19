@@ -1,4 +1,6 @@
+#include <shibori/engine/checked_arithmetic.hpp>
 #include <shibori/engine/error.hpp>
+#include <shibori/engine/resource.hpp>
 #include <shibori/engine/result.hpp>
 #include <shibori/engine/version.hpp>
 
@@ -17,5 +19,28 @@ int main() {
   }
 
   const shibori::engine::Result<int> value = 42;
-  return value.value() == 42 ? 0 : 1;
+  if (value.value() != 42) {
+    return 1;
+  }
+
+  const auto size = shibori::engine::checked_add(
+      20,
+      22,
+      shibori::engine::Operation::configure,
+      "consumer size");
+  if (!size || *size != 42) {
+    return 1;
+  }
+
+  auto budget = shibori::engine::ResourceBudget::create_root(
+      shibori::engine::ResourceKind::resident_memory,
+      64);
+  if (!budget) {
+    return 1;
+  }
+
+  auto reservation = budget->reserve(
+      64,
+      shibori::engine::Operation::configure);
+  return reservation && budget->used() == 64 ? 0 : 1;
 }

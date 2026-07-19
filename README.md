@@ -22,6 +22,7 @@ before the container and API are stabilized.
 - [Adaptive policy](docs/adaptive-policy.md)
 - [Public API](docs/api.md)
 - [Error handling](docs/error-handling.md)
+- [Resource governance](docs/resource-governance.md)
 - [Reliability and security](docs/reliability-security.md)
 - [Testing strategy](docs/testing.md)
 - [Compatibility policy](docs/compatibility.md)

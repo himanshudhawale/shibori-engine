@@ -21,6 +21,7 @@ add_library(Shibori::engine ALIAS shibori_engine)
 target_sources(
   shibori_engine
   PRIVATE
+    src/block.cpp
     src/checked_arithmetic.cpp
     src/column.cpp
     src/error.cpp

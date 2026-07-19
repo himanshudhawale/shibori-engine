@@ -34,6 +34,17 @@ target_sources(
     src/version.cpp
 )
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64|i[3-6]86)$")
+  target_sources(shibori_engine PRIVATE src/crc32c_x86.cpp)
+  target_compile_definitions(shibori_engine PRIVATE SHIBORI_HAS_X86_CRC32C=1)
+  if(NOT MSVC)
+    set_source_files_properties(
+      src/crc32c_x86.cpp
+      PROPERTIES COMPILE_OPTIONS "-msse4.2"
+    )
+  endif()
+endif()
+
 target_compile_features(shibori_engine PUBLIC cxx_std_23)
 
 target_include_directories(

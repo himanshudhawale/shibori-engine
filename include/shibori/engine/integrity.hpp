@@ -48,11 +48,26 @@ class Crc32c {
   std::uint32_t value_;
 };
 
+enum class Crc32cMode : std::uint8_t {
+  automatic,
+  portable,
+};
+
+enum class Crc32cImplementation : std::uint8_t {
+  portable,
+  hardware,
+};
+
 class Crc32cHasher {
  public:
-  constexpr Crc32cHasher() noexcept = default;
+  SHIBORI_ENGINE_API explicit Crc32cHasher(
+      Crc32cMode mode = Crc32cMode::automatic) noexcept;
 
   SHIBORI_ENGINE_API void update(std::span<const std::byte> bytes) noexcept;
+  [[nodiscard]] SHIBORI_ENGINE_API static bool hardware_available() noexcept;
+  [[nodiscard]] constexpr Crc32cImplementation implementation() const noexcept {
+    return implementation_;
+  }
 
   [[nodiscard]] constexpr Crc32c finalize() const noexcept {
     return Crc32c(state_ ^ 0xffffffffU);
@@ -64,6 +79,7 @@ class Crc32cHasher {
 
  private:
   std::uint32_t state_ = 0xffffffffU;
+  Crc32cImplementation implementation_ = Crc32cImplementation::portable;
 };
 
 class Blake3Digest {

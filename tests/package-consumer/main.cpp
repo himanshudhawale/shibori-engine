@@ -98,6 +98,8 @@ int main() {
               std::byte{0x56},
               std::byte{0x34},
               std::byte{0x12}});
+  shibori::engine::Crc32cHasher crc_hasher;
+  crc_hasher.update(std::as_bytes(std::span("123456789", 9)));
   const auto digest = shibori::engine::Blake3Digest::from_hex(
       "000102030405060708090a0b0c0d0e0f"
       "101112131415161718191a1b1c1d1e1f");
@@ -106,7 +108,8 @@ int main() {
              values_set && column_set && block && block->row_count() == 1 &&
              io_written && (*sink)->bytes().size() == 8 && file_written &&
              file_flushed && file_read && file_bytes == column_bytes &&
-             crc.value() == 0x12345678U && digest &&
+             crc.value() == 0x12345678U &&
+             crc_hasher.finalize().value() == 0xe3069283U && digest &&
              digest->to_hex().size() == shibori::engine::Blake3Digest::hex_size
          ? 0
          : 1;

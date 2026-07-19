@@ -48,6 +48,24 @@ class Crc32c {
   std::uint32_t value_;
 };
 
+class Crc32cHasher {
+ public:
+  constexpr Crc32cHasher() noexcept = default;
+
+  SHIBORI_ENGINE_API void update(std::span<const std::byte> bytes) noexcept;
+
+  [[nodiscard]] constexpr Crc32c finalize() const noexcept {
+    return Crc32c(state_ ^ 0xffffffffU);
+  }
+
+  constexpr void reset() noexcept {
+    state_ = 0xffffffffU;
+  }
+
+ private:
+  std::uint32_t state_ = 0xffffffffU;
+};
+
 class Blake3Digest {
  public:
   static constexpr std::size_t byte_size = 32;

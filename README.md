@@ -21,6 +21,7 @@ before the container and API are stabilized.
 - [Immutable schemas](docs/schemas.md)
 - [Typed column storage](docs/columns.md)
 - [Bounded immutable blocks](docs/blocks.md)
+- [Bounded byte I/O](docs/byte-io.md)
 - [Container format](docs/container-format.md)
 - [Compression pipeline](docs/compression-pipeline.md)
 - [Adaptive policy](docs/adaptive-policy.md)

@@ -103,6 +103,11 @@ int main() {
   const auto digest = shibori::engine::Blake3Digest::from_hex(
       "000102030405060708090a0b0c0d0e0f"
       "101112131415161718191a1b1c1d1e1f");
+  auto blake3 = shibori::engine::Blake3Hasher::create();
+  if (!blake3) {
+    return 1;
+  }
+  blake3->update(std::as_bytes(std::span("abc", 3)));
   return reservation && budget->used() == 64 && decimal && added && schema &&
              schema->field_count() == 1 && decimal->fixed_width_bytes() == 16 &&
              values_set && column_set && block && block->row_count() == 1 &&
@@ -110,7 +115,12 @@ int main() {
              file_flushed && file_read && file_bytes == column_bytes &&
              crc.value() == 0x12345678U &&
              crc_hasher.finalize().value() == 0xe3069283U && digest &&
-             digest->to_hex().size() == shibori::engine::Blake3Digest::hex_size
+             digest->to_hex().size() ==
+                 shibori::engine::Blake3Digest::hex_size &&
+             blake3 &&
+             blake3->finalize().to_hex() ==
+                 "6437b3ac38465133ffb63b75273a8db5"
+                 "48c558465d79db03fd359c6cd5bd9d85"
          ? 0
          : 1;
 }

@@ -2,8 +2,13 @@
 
 #include "crc32c_backend.hpp"
 
+#include <blake3.h>
+
 #include <array>
+#include <memory>
+#include <new>
 #include <string>
+#include <utility>
 
 namespace shibori::engine {
 namespace {
@@ -55,6 +60,15 @@ std::uint32_t portable_crc32c_update(
 }
 
 }  // namespace detail
+
+class Blake3Hasher::Impl {
+ public:
+  Impl() {
+    blake3_hasher_init(&state);
+  }
+
+  blake3_hasher state;
+};
 
 Crc32cHasher::Crc32cHasher(Crc32cMode mode) noexcept {
 #if defined(SHIBORI_HAS_X86_CRC32C)
@@ -115,6 +129,47 @@ Result<Blake3Digest> Blake3Digest::from_hex(std::string_view text) {
     bytes[index] = static_cast<std::byte>((high << 4) | low);
   }
   return Blake3Digest(bytes);
+}
+
+std::string_view blake3_version() noexcept {
+  return ::blake3_version();
+}
+
+Blake3Hasher::Blake3Hasher(std::unique_ptr<Impl> impl) noexcept
+    : impl_(std::move(impl)) {}
+
+Blake3Hasher::~Blake3Hasher() = default;
+
+Blake3Hasher::Blake3Hasher(Blake3Hasher&& other) noexcept = default;
+
+Blake3Hasher& Blake3Hasher::operator=(Blake3Hasher&& other) noexcept = default;
+
+Result<Blake3Hasher> Blake3Hasher::create() {
+  try {
+    return Blake3Hasher(std::make_unique<Impl>());
+  } catch (const std::bad_alloc&) {
+    return fail(
+        ErrorCode::allocation_failed,
+        Operation::configure,
+        "unable to allocate BLAKE3 hasher state");
+  }
+}
+
+void Blake3Hasher::update(std::span<const std::byte> bytes) noexcept {
+  blake3_hasher_update(&impl_->state, bytes.data(), bytes.size());
+}
+
+Blake3Digest Blake3Hasher::finalize() const noexcept {
+  std::array<std::byte, Blake3Digest::byte_size> bytes{};
+  blake3_hasher_finalize(
+      &impl_->state,
+      reinterpret_cast<std::uint8_t*>(bytes.data()),
+      bytes.size());
+  return Blake3Digest(bytes);
+}
+
+void Blake3Hasher::reset() noexcept {
+  blake3_hasher_reset(&impl_->state);
 }
 
 }  // namespace shibori::engine

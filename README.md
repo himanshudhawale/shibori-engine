@@ -17,6 +17,7 @@ before the container and API are stabilized.
 - [Product requirements](docs/product-requirements.md)
 - [Architecture](docs/architecture.md)
 - [Data model](docs/data-model.md)
+- [Logical types](docs/logical-types.md)
 - [Container format](docs/container-format.md)
 - [Compression pipeline](docs/compression-pipeline.md)
 - [Adaptive policy](docs/adaptive-policy.md)

@@ -5,18 +5,24 @@ project(
   VERSION 0.1.0
   DESCRIPTION "Adaptive, type-aware compression for database data"
   HOMEPAGE_URL "https://github.com/himanshudhawale/shibori-engine"
-  LANGUAGES CXX
+  LANGUAGES C CXX
 )
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 include(GNUInstallDirs)
+include(cmake/Blake3.cmake)
 
 option(BUILD_SHARED_LIBS "Build Shibori Engine as a shared library" OFF)
 option(SHIBORI_BUILD_TESTS "Build Shibori Engine tests" ${PROJECT_IS_TOP_LEVEL})
 
 add_library(shibori_engine)
 add_library(Shibori::engine ALIAS shibori_engine)
+target_sources(shibori_engine PRIVATE $<TARGET_OBJECTS:shibori_blake3>)
+target_include_directories(
+  shibori_engine
+  PRIVATE "${blake3_source_SOURCE_DIR}/c"
+)
 
 target_sources(
   shibori_engine

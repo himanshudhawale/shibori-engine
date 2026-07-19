@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/shibori-engine-icon.svg" alt="Shibori Engine icon" width="180">
+  <img src="assets/shibori-engine-icon.svg" alt="Shibori Engine icon" width="96">
 </p>
 
 # Shibori Engine

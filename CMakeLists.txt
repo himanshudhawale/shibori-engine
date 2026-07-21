@@ -34,6 +34,7 @@ target_sources(
     src/file_io.cpp
     src/format/endian.cpp
     src/format/preamble.cpp
+    src/format/record.cpp
     src/io.cpp
     src/integrity.cpp
     src/logical_type.cpp

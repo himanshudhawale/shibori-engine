@@ -44,3 +44,23 @@ Failures are distinct:
 
 Format 1 readers accept a higher minor value at this layer. Required feature
 negotiation determines whether the rest of that container is readable.
+
+## Record envelope encoding
+
+Every record starts with exactly 32 bytes:
+
+| Offset | Size | Value |
+| ---: | ---: | --- |
+| 0 | 4 | ASCII `SHR1` |
+| 4 | 1 | record type |
+| 5 | 1 | record flags |
+| 6 | 2 | little-endian extension length |
+| 8 | 8 | little-endian payload length |
+| 16 | 8 | little-endian sequence number |
+| 24 | 4 | little-endian CRC32C over bytes 0 through 23 |
+| 28 | 4 | little-endian CRC32C over extension then payload bytes |
+
+Flag bit 0 marks a mandatory record. Bits 1 through 7 are reserved in format 1,
+must remain zero, and are rejected by the encoder. Envelope CRC calculation
+uses the portable implementation to keep golden output independent of runtime
+hardware dispatch.

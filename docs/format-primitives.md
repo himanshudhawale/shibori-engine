@@ -64,3 +64,8 @@ Flag bit 0 marks a mandatory record. Bits 1 through 7 are reserved in format 1,
 must remain zero, and are rejected by the encoder. Envelope CRC calculation
 uses the portable implementation to keep golden output independent of runtime
 hardware dispatch.
+
+Record-envelope parsing requires all 32 bytes before field access. It validates
+sync and reserved flags, enforces caller-provided extension and payload limits,
+checks complete-record length arithmetic, then verifies envelope CRC32C. No
+extension or payload bytes are acquired by this fixed-framing parser.

@@ -20,6 +20,19 @@ constexpr std::array<std::byte, 4> record_sync{
     std::byte{'1'},
 };
 
+constexpr bool is_known_record_type(RecordType type) noexcept {
+  switch (type) {
+    case RecordType::file_header:
+    case RecordType::schema:
+    case RecordType::data_block:
+    case RecordType::block_index:
+    case RecordType::file_footer:
+    case RecordType::user_metadata:
+      return true;
+  }
+  return false;
+}
+
 template <std::size_t Size>
 void write_bytes(
     std::array<std::byte, record_envelope_size>& output,
@@ -145,6 +158,64 @@ Result<RecordEnvelope> parse_record_envelope(
       .payload_checksum =
           Crc32c::from_little_endian(bytes.subspan<28, 4>()),
   };
+}
+
+Result<VerifiedRecord> verify_record(
+    std::span<const std::byte> envelope_bytes,
+    std::span<const std::byte> extension,
+    std::span<const std::byte> payload,
+    const RecordEnvelopeLimits& limits) {
+  auto envelope = parse_record_envelope(envelope_bytes, limits);
+  if (!envelope) {
+    return std::unexpected(std::move(envelope.error()));
+  }
+  if (extension.size() != envelope->extension_length ||
+      payload.size() != envelope->payload_length) {
+    return fail(
+        ErrorCode::invalid_record,
+        Operation::verify,
+        "record content does not match the envelope lengths");
+  }
+
+  Crc32cHasher checksum(Crc32cMode::portable);
+  checksum.update(extension);
+  checksum.update(payload);
+  if (checksum.finalize() != envelope->payload_checksum) {
+    return fail(
+        ErrorCode::checksum_mismatch,
+        Operation::verify,
+        "record payload CRC32C does not match");
+  }
+  return VerifiedRecord(*envelope);
+}
+
+Result<RecordDisposition> RecordSequenceTracker::accept(
+    const VerifiedRecord& record) {
+  const auto& envelope = record.envelope();
+  if (envelope.sequence != expected_sequence_) {
+    return fail(
+        ErrorCode::invalid_record,
+        Operation::parse,
+        "record sequence does not match the expected value");
+  }
+  if (!is_known_record_type(envelope.type) && envelope.mandatory()) {
+    return std::unexpected(
+        Error(
+            ErrorCode::unsupported_feature,
+            Operation::parse,
+            "unknown mandatory record type")
+            .with_component_id(static_cast<std::uint8_t>(envelope.type)));
+  }
+
+  auto next_sequence = checked_add(
+      expected_sequence_, 1, Operation::parse, "next record sequence");
+  if (!next_sequence) {
+    return std::unexpected(std::move(next_sequence.error()));
+  }
+  expected_sequence_ = *next_sequence;
+  return is_known_record_type(envelope.type)
+             ? RecordDisposition::process
+             : RecordDisposition::skip;
 }
 
 }  // namespace shibori::engine::detail

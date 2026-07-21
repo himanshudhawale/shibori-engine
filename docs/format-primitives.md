@@ -69,3 +69,9 @@ Record-envelope parsing requires all 32 bytes before field access. It validates
 sync and reserved flags, enforces caller-provided extension and payload limits,
 checks complete-record length arithmetic, then verifies envelope CRC32C. No
 extension or payload bytes are acquired by this fixed-framing parser.
+
+Before record disposition, extension and payload spans must exactly match their
+declared lengths and their combined CRC32C must verify. Sequence tracking starts
+at zero and advances once per accepted record. Known records are processed,
+unknown mandatory records fail, and unknown optional records may be skipped
+only after complete verification.

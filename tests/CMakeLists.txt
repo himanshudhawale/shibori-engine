@@ -90,6 +90,25 @@ target_include_directories(
   PRIVATE "${PROJECT_SOURCE_DIR}/src/format"
 )
 
+add_executable(
+  shibori_engine_record_envelope_parse_test
+  record_envelope_parse_test.cpp
+)
+target_sources(
+  shibori_engine_record_envelope_parse_test
+  PRIVATE
+    "${PROJECT_SOURCE_DIR}/src/format/endian.cpp"
+    "${PROJECT_SOURCE_DIR}/src/format/record.cpp"
+)
+target_link_libraries(
+  shibori_engine_record_envelope_parse_test
+  PRIVATE Shibori::engine
+)
+target_include_directories(
+  shibori_engine_record_envelope_parse_test
+  PRIVATE "${PROJECT_SOURCE_DIR}/src/format"
+)
+
 if(MSVC)
   target_compile_options(
     shibori_engine_smoke_test
@@ -153,6 +172,10 @@ if(MSVC)
   )
   target_compile_options(
     shibori_engine_record_envelope_encode_test
+    PRIVATE /W4 /permissive-
+  )
+  target_compile_options(
+    shibori_engine_record_envelope_parse_test
     PRIVATE /W4 /permissive-
   )
 else()
@@ -268,6 +291,13 @@ else()
       -Wextra
       -Wpedantic
   )
+  target_compile_options(
+    shibori_engine_record_envelope_parse_test
+    PRIVATE
+      -Wall
+      -Wextra
+      -Wpedantic
+  )
 endif()
 
 add_test(NAME shibori_engine.smoke COMMAND shibori_engine_smoke_test)
@@ -304,6 +334,10 @@ add_test(
   NAME shibori_engine.record_envelope_encode
   COMMAND shibori_engine_record_envelope_encode_test
 )
+add_test(
+  NAME shibori_engine.record_envelope_parse
+  COMMAND shibori_engine_record_envelope_parse_test
+)
 
 if(WIN32)
   set_tests_properties(
@@ -323,6 +357,7 @@ if(WIN32)
     shibori_engine.preamble_encode
     shibori_engine.preamble_parse
     shibori_engine.record_envelope_encode
+    shibori_engine.record_envelope_parse
     PROPERTIES
       ENVIRONMENT_MODIFICATION
         "PATH=path_list_prepend:$<TARGET_FILE_DIR:shibori_engine>"

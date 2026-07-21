@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include <shibori/engine/integrity.hpp>
 #include <shibori/engine/result.hpp>
@@ -37,7 +38,16 @@ struct RecordEnvelope {
   constexpr bool operator==(const RecordEnvelope&) const noexcept = default;
 };
 
+struct RecordEnvelopeLimits {
+  std::uint16_t maximum_extension_length;
+  std::uint64_t maximum_payload_length;
+};
+
 [[nodiscard]] Result<std::array<std::byte, record_envelope_size>>
 encode_record_envelope(const RecordEnvelope& envelope);
+
+[[nodiscard]] Result<RecordEnvelope> parse_record_envelope(
+    std::span<const std::byte> bytes,
+    const RecordEnvelopeLimits& limits);
 
 }  // namespace shibori::engine::detail

@@ -43,11 +43,53 @@ struct RecordEnvelopeLimits {
   std::uint64_t maximum_payload_length;
 };
 
+enum class RecordDisposition : std::uint8_t {
+  process,
+  skip,
+};
+
+class VerifiedRecord {
+ public:
+  [[nodiscard]] constexpr const RecordEnvelope& envelope() const noexcept {
+    return envelope_;
+  }
+
+ private:
+  explicit constexpr VerifiedRecord(RecordEnvelope envelope) noexcept
+      : envelope_(envelope) {}
+
+  friend Result<VerifiedRecord> verify_record(
+      std::span<const std::byte> envelope_bytes,
+      std::span<const std::byte> extension,
+      std::span<const std::byte> payload,
+      const RecordEnvelopeLimits& limits);
+
+  RecordEnvelope envelope_;
+};
+
+class RecordSequenceTracker {
+ public:
+  [[nodiscard]] Result<RecordDisposition> accept(
+      const VerifiedRecord& record);
+  [[nodiscard]] constexpr std::uint64_t expected_sequence() const noexcept {
+    return expected_sequence_;
+  }
+
+ private:
+  std::uint64_t expected_sequence_ = 0;
+};
+
 [[nodiscard]] Result<std::array<std::byte, record_envelope_size>>
 encode_record_envelope(const RecordEnvelope& envelope);
 
 [[nodiscard]] Result<RecordEnvelope> parse_record_envelope(
     std::span<const std::byte> bytes,
+    const RecordEnvelopeLimits& limits);
+
+[[nodiscard]] Result<VerifiedRecord> verify_record(
+    std::span<const std::byte> envelope_bytes,
+    std::span<const std::byte> extension,
+    std::span<const std::byte> payload,
     const RecordEnvelopeLimits& limits);
 
 }  // namespace shibori::engine::detail

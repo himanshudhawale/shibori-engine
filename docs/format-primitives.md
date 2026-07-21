@@ -28,3 +28,19 @@ The format 1.0 checksum is `0x9ec3bdeb`, serialized as
 its bytes do not depend on runtime acceleration availability.
 
 Preamble parsing and validation remain a separate child issue.
+
+## File preamble parsing
+
+Parsing first requires all 16 bytes, then validates the eight-byte magic before
+reading version fields. It verifies CRC32C before interpreting version support,
+so a corrupted version cannot be misreported as merely unsupported.
+
+Failures are distinct:
+
+- `unexpected_end` for fewer than 16 bytes;
+- `invalid_magic` for a non-Shibori file;
+- `checksum_mismatch` for corrupted preamble bytes;
+- `unsupported_format_version` for a valid but unsupported major version.
+
+Format 1 readers accept a higher minor value at this layer. Required feature
+negotiation determines whether the rest of that container is readable.

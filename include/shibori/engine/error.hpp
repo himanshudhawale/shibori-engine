@@ -37,6 +37,7 @@ enum class ErrorCode : std::uint16_t {
   checksum_mismatch = 5000,
   malformed_container = 5001,
   invalid_record = 5002,
+  invalid_magic = 5003,
   unsupported_format_version = 6000,
   unsupported_feature = 6001,
   missing_component = 6002,

@@ -102,6 +102,8 @@ std::string_view to_string(ErrorCode code) noexcept {
       return "malformed_container";
     case ErrorCode::invalid_record:
       return "invalid_record";
+    case ErrorCode::invalid_magic:
+      return "invalid_magic";
     case ErrorCode::unsupported_format_version:
       return "unsupported_format_version";
     case ErrorCode::unsupported_feature:
